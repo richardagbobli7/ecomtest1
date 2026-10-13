@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Classic Ventures - Advanced Admin & Storefront</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '475px',
+                    },
+                    colors: {
+                        frankoBlue: '#0f2a4a',
+                        frankoBlueDark: '#08172b',
+                        frankoBlueLight: '#1e3a5f',
+                        frankoGold: '#f59e0b',
+                        frankoGoldDark: '#d97706',
+                        frankoRed: '#dc2626',
+                        frankoRedDark: '#b91c1c',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .custom-scrollbar::-webkit-scrollbar { height: 4px; width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans overflow-x-hidden">
+
+    <!-- MAIN APPLICATION HEADER -->
+    <header class="bg-frankoBlue text-white sticky top-0 z-40 shadow-xl border-b border-frankoBlueLight">
+        <!-- Top Announcement & Branch Bar -->
+        <div class="bg-frankoBlueDark text-slate-300 text-[10px] sm:text-xs py-1.5 px-3 border-b border-slate-800">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5 sm:gap-2">
+                <div class="flex items-center space-x-3 text-[11px]">
+                    <span class="flex items-center space-x-1">
+                        <i class="fa-solid fa-phone text-frankoGold"></i>
+                        <span class="font-semibold text-white">+233 0302 225 683</span>
+                    </span>
+                    <span class="text-slate-600">|</span>
+                    <span class="flex items-center space-x-1">
+                        <i class="fa-solid fa-truck-fast text-frankoGold"></i>
+                        <span>Ghana Express Delivery</span>
+                    </span>
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <label for="branchSelect" class="text-[10px] sm:text-[11px] text-slate-400 font-medium">Branch:</label>
+                    <select id="branchSelect" onchange="switchBranch()" class="bg-frankoBlue text-white text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded border border-slate-700 focus:outline-none focus:ring-1 focus:ring-frankoGold">
+                        <option value="Accra Central (Adabraka)">Accra (Adabraka Main)</option>
+                        <option value="Circle Flagstaff House">Accra (Circle Branch)</option>
+                        <option value="Kumasi Adum">Kumasi (Adum)</option>
+                        <option value="Tema Community 1">Tema (Comm. 1)</option>
+                        <option value="Takoradi Market Circle">Takoradi (Market Circle)</option>
+                        <option value="Tamale Central">Tamale Central</option>
+                        <option value="Koforidua Central">Koforidua</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary Header Content -->
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5">
+            <div class="flex justify-between items-center gap-2 sm:gap-3">
+                
+                <!-- Brand Logo -->
+                <div onclick="switchView('store')" class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group flex-shrink-0">
+                    <div class="bg-frankoRed text-white p-2 rounded-xl sm:rounded-2xl font-black text-xl sm:text-2xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-store text-frankoGold"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1">
+                            <span class="text-lg sm:text-2xl font-black tracking-tight text-white">CLASSIC</span>
+                            <span class="text-lg sm:text-2xl font-black tracking-tight text-frankoGold">VENTURES</span>
+                        </div>
+                        <span class="block text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-slate-300">Official Tech Retailer</span>
+                    </div>
+                </div>
+
+                <!-- Global Live Search Bar (Desktop) -->
+                <div class="hidden lg:flex flex-grow max-w-lg mx-6 relative">
+                    <input type="text" id="globalSearchInput" oninput="handleGlobalSearch()" placeholder="Search phones, laptops, smart TVs, fridges..." class="w-full bg-frankoBlueDark text-white placeholder-slate-400 pl-11 pr-10 py-2.5 rounded-2xl border border-frankoBlueLight text-sm focus:outline-none focus:ring-2 focus:ring-frankoGold transition-all shadow-inner">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center space-x-1.5 sm:space-x-3">
+                    <!-- Visitor Account / Auth Trigger -->
+                    <div id="visitorAccountSection" class="flex items-center">
+                        <button onclick="openVisitorAuthModal('login')" class="bg-frankoBlueDark hover:bg-slate-800 text-slate-200 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold border border-frankoBlueLight flex items-center space-x-1">
+                            <i class="fa-solid fa-user text-frankoGold"></i>
+                            <span class="hidden sm:inline">Sign In</span>
+                        </button>
+                    </div>
+
+                    <!-- Admin View Trigger -->
+                    <button id="viewToggleBtn" onclick="handleAdminPortalClick()" class="bg-frankoBlueDark hover:bg-slate-800 border border-frankoBlueLight text-slate-100 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1.5 transition-all shadow-md">
+                        <i id="viewToggleIcon" class="fa-solid fa-shield-halved text-frankoGold"></i>
+                        <span id="viewToggleText" class="hidden xs:inline">Admin</span>
+                    </button>
+
+                    <!-- Cart Drawer Trigger -->
+                    <button onclick="toggleCartDrawer()" class="relative bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black p-2 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm flex items-center space-x-1.5 transition-all shadow-lg">
+                        <i class="fa-solid fa-cart-shopping text-sm sm:text-base"></i>
+                        <span class="hidden md:inline text-xs uppercase tracking-wider font-black">Cart</span>
+                        <span id="cartCountBadge" class="bg-frankoRed text-white text-[10px] sm:text-[11px] font-black px-1.5 sm:px-2 py-0.5 rounded-full shadow-sm">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Live Search -->
+        <div class="lg:hidden px-3 pb-2.5">
+            <div class="relative w-full">
+                <input type="text" id="mobileSearchInput" oninput="handleGlobalSearch()" placeholder="Search phones, laptops, smart TVs..." class="w-full bg-frankoBlueDark text-white placeholder-slate-400 pl-9 pr-8 py-2 rounded-xl border border-frankoBlueLight text-xs focus:outline-none focus:ring-2 focus:ring-frankoGold">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        
+        <!-- ================= STOREFRONT VIEW ================= -->
+        <div id="storefrontView" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+            
+            <!-- Dynamic Category Strip Carousel -->
+            <div class="mb-4 sm:mb-6 overflow-x-auto custom-scrollbar pb-2">
+                <div id="categoryBannerList" class="flex space-x-2 sm:space-x-3 min-w-max">
+                    <!-- Dynamic Categories Rendered Here -->
+                </div>
+            </div>
+
+            <!-- Mobile & Desktop Promo Banner -->
+            <div class="relative bg-gradient-to-r from-frankoBlueDark via-frankoBlue to-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-10 text-white mb-6 sm:mb-8 overflow-hidden border border-frankoBlueLight shadow-2xl">
+                <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-8 translate-y-8 pointer-events-none hidden sm:block">
+                    <i class="fa-solid fa-mobile-screen-button text-[240px]"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <div class="inline-flex items-center space-x-1.5 bg-frankoRed text-white text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-md mb-2.5">
+                        <i class="fa-solid fa-certificate text-frankoGold"></i>
+                        <span>100% Genuine Ghana Warranty</span>
+                    </div>
+                    <h1 class="text-xl sm:text-4xl md:text-5xl font-black tracking-tight mb-2 sm:mb-3 leading-tight">Buy Original Phones & Home Appliances in Ghana</h1>
+                    <p class="text-slate-300 text-xs sm:text-sm md:text-base mb-4 sm:mb-6 leading-relaxed">Shop genuine Apple, Samsung, Tecno, Smart TVs, Laptops, Fridges & Air Conditioners with Mobile Money (MTN, Telecel, AT) express nationwide delivery.</p>
+                    <div class="flex flex-wrap gap-2.5">
+                        <a href="#storeGrid" class="bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl text-xs sm:text-sm transition-all shadow-xl flex items-center space-x-2">
+                            <span>Browse Product Catalog</span>
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </a>
+                        <button onclick="filterByCategory('Smartphones')" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl text-xs sm:text-sm transition-all border border-white/20">
+                            Smartphones
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store Catalog Section -->
+            <div id="storeGrid" class="flex flex-col lg:flex-row gap-6 lg:gap-8">
+                
+                <!-- Left Sidebar Filters -->
+                <aside class="w-full lg:w-64 flex-shrink-0">
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm sticky top-20">
+                        <div class="flex justify-between items-center mb-3 sm:mb-4 pb-2.5 border-b border-slate-100">
+                            <h3 class="font-black text-slate-900 text-xs sm:text-sm uppercase tracking-wider flex items-center space-x-2">
+                                <i class="fa-solid fa-filter text-frankoRed"></i>
+                                <span>Filter By Category</span>
+                            </h3>
+                            <button onclick="resetAllFilters()" class="text-[11px] font-bold text-frankoRed hover:underline">Reset All</button>
+                        </div>
+
+                        <!-- Category Dropdown Filter -->
+                        <div class="mb-4">
+                            <label for="categoryDropdownSelect" class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                                Select Category
+                            </label>
+                            <div class="relative">
+                                <select id="categoryDropdownSelect" onchange="handleCategoryDropdownChange(this.value)" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold py-2.5 px-3 pr-8 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-frankoGold shadow-sm cursor-pointer transition-all">
+                                    <!-- Populated via JS -->
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Quick List (Desktop Only) -->
+                        <div id="sidebarCategoryList" class="hidden lg:block space-y-1">
+                        </div>
+
+                        <!-- Price Range Filter -->
+                        <div class="mt-4 lg:mt-6 pt-4 lg:pt-5 border-t border-slate-100">
+                            <h4 class="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-slate-700 mb-2 sm:mb-3">Price Range (GH₵)</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-2">
+                                    <input type="number" id="minPriceInput" oninput="applyFilters()" placeholder="Min GH₵" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-frankoGold">
+                                    <span class="text-slate-400 text-xs">-</span>
+                                    <input type="number" id="maxPriceInput" oninput="applyFilters()" placeholder="Max GH₵" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-frankoGold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- In Stock Filter -->
+                        <div class="mt-4 lg:mt-6 pt-4 lg:pt-5 border-t border-slate-100">
+                            <label class="flex items-center space-x-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                                <input type="checkbox" id="inStockOnlyCheckbox" onchange="applyFilters()" class="rounded text-frankoRed focus:ring-frankoRed">
+                                <span>In Stock Only</span>
+                            </label>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Main Product Grid -->
+                <main class="flex-grow">
+                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm mb-5 flex flex-col xs:flex-row justify-between items-start xs:items-center gap-2.5">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Viewing:</span>
+                            <span id="activeCategoryTitle" class="font-black text-xs sm:text-sm text-frankoBlue bg-slate-100 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-xl truncate max-w-[150px] sm:max-w-none">All Items</span>
+                            <span id="productCountBadge" class="text-[11px] sm:text-xs text-slate-500 font-semibold">(0)</span>
+                        </div>
+
+                        <div class="flex items-center space-x-2 w-full xs:w-auto justify-between xs:justify-end">
+                            <label class="text-[11px] sm:text-xs font-semibold text-slate-500">Sort:</label>
+                            <select id="sortSelect" onchange="applyFilters()" class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-frankoGold">
+                                <option value="default">Featured First</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="name">Product Name (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <div id="emptyStorefrontState" class="hidden bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center my-6">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 text-2xl mx-auto mb-4">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800">No items match your criteria</h3>
+                        <p class="text-slate-500 text-xs sm:text-sm mt-1 max-w-sm mx-auto">Try resetting price filters or adding products in the Admin Portal.</p>
+                        <button onclick="resetAllFilters()" class="mt-4 bg-frankoBlue text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-slate-800 transition-all">Reset Filters</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- ================= ADMIN PORTAL VIEW ================= -->
+        <div id="adminPortalView" class="hidden max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+            
+            <!-- Admin Top Banner -->
+            <div class="bg-frankoBlueDark text-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl mb-6 sm:mb-8 border border-frankoBlueLight shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
+                <div>
+                    <div class="inline-flex items-center space-x-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] sm:text-[10px] font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-widest mb-2">
+                        <i class="fa-solid fa-shield-check"></i>
+                        <span>Authenticated Admin Portal (Secured Session)</span>
+                    </div>
+                    <h1 class="text-xl sm:text-3xl font-black">Classic Ventures Control Center</h1>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-1">Logged in as: <span id="adminDisplayUsername" class="font-bold text-frankoGold">Admin</span> • <span id="adminDisplayContact" class="text-slate-300"></span> • <span id="adminDisplayEmail" class="text-slate-300"></span></p>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
+                    <button onclick="openAddProductModal()" class="flex-1 md:flex-initial bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black px-3.5 py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Product</span>
+                    </button>
+                    <button onclick="openCategoryModal()" class="flex-1 md:flex-initial bg-frankoBlue hover:bg-frankoBlueLight text-white border border-frankoBlueLight font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-folder-plus text-frankoGold"></i>
+                        <span>Add Category</span>
+                    </button>
+                    <button onclick="openSecuritySettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold px-3 py-2.5 rounded-xl text-xs transition-all flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-key text-frankoGold"></i>
+                        <span>Security</span>
+                    </button>
+                    <button onclick="adminLogout()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Overview Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Total Catalog Items</span>
+                    <div class="flex justify-between items-baseline">
+                        <h3 id="adminStatTotal" class="text-xl sm:text-2xl font-black text-slate-900">0</h3>
+                        <i class="fa-solid fa-boxes-stacked text-slate-300 text-base sm:text-lg"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Total Valuation</span>
+                    <div class="flex justify-between items-baseline">
+                        <h3 id="adminStatValuation" class="text-sm sm:text-xl font-black text-slate-900">GH₵ 0</h3>
+                        <i class="fa-solid fa-cedi-sign text-slate-300 text-base sm:text-lg"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">In Stock Items</span>
+                    <div class="flex justify-between items-baseline">
+                        <h3 id="adminStatInStock" class="text-xl sm:text-2xl font-black text-emerald-600">0</h3>
+                        <i class="fa-solid fa-circle-check text-emerald-300 text-base sm:text-lg"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Out of Stock</span>
+                    <div class="flex justify-between items-baseline">
+                        <h3 id="adminStatLowStock" class="text-xl sm:text-2xl font-black text-rose-600">0</h3>
+                        <i class="fa-solid fa-triangle-exclamation text-rose-300 text-base sm:text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN SECURITY AUDIT TRAIL -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6 sm:mb-8">
+                <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h3 class="font-black text-slate-900 text-sm sm:text-base flex items-center space-x-2">
+                            <i class="fa-solid fa-shield-halved text-frankoGold"></i>
+                            <span>Admin Security Audit Trail & Activity Logs</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-500">Real-time cryptographic audit trail of all sensitive administrative actions.</p>
+                    </div>
+                    <button onclick="clearAuditLogs()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-xs transition-all flex items-center space-x-1">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span class="hidden xs:inline">Clear</span>
+                    </button>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div id="auditLogContainer" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs font-mono">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN REGISTERED VISITORS & ACCOUNTS MANAGEMENT (WITH CART INSPECTOR & CLEAR CART FUNCTIONALITY) -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6 sm:mb-8">
+                <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h3 class="font-black text-slate-900 text-sm sm:text-base flex items-center space-x-2">
+                            <i class="fa-solid fa-users text-frankoGold"></i>
+                            <span>Registered Visitor Accounts & Cart Inspector</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-500">View customer profiles, active visitor cart items, and delete customer carts directly.</p>
+                    </div>
+                    <span id="adminVisitorCountBadge" class="bg-frankoBlue text-white text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full">0 visitors</span>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div id="adminVisitorListContainer" class="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN LIVE SUPPORT MESSAGES INBOX -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6 sm:mb-8">
+                <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h3 class="font-black text-slate-900 text-sm sm:text-base flex items-center space-x-2">
+                            <i class="fa-solid fa-comments text-frankoGold"></i>
+                            <span>Live Support Inbox</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-500">View customer messages and reply directly in real time.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span id="adminUnreadMsgCount" class="bg-frankoRed text-white text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
+                        <button onclick="adminClearAllChats()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-xl text-xs transition-all flex items-center space-x-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div id="adminChatInboxContainer" class="space-y-4 max-h-72 overflow-y-auto custom-scrollbar mb-4">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <div id="adminReplyBoxWrapper" class="hidden pt-4 border-t border-slate-100 flex items-center space-x-2">
+                        <input type="hidden" id="adminReplyTargetUser">
+                        <input type="text" id="adminReplyInput" placeholder="Type admin reply..." class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-frankoGold">
+                        <button onclick="sendAdminReplyMessage()" class="bg-frankoBlue hover:bg-slate-900 text-white font-black px-4 py-2 rounded-xl text-xs transition-all shadow">
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADVANCED STOCK MANAGEMENT PANEL -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6 sm:mb-8">
+                <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-slate-50">
+                    <div>
+                        <h3 class="font-black text-slate-900 text-sm sm:text-base flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders text-frankoGold"></i>
+                            <span>Advanced Stock & Warehouse Control</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-500">Batch restock, status toggle, and quick quantity adjustments.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="bulkRestockAll(10)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs shadow transition-all flex items-center space-x-1">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>Restock All (+10)</span>
+                        </button>
+                        <select id="advStockFilterSelect" onchange="renderAdvancedStockPanel()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none">
+                            <option value="all">All Items</option>
+                            <option value="low">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div id="advancedStockGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-h-[500px] overflow-y-auto custom-scrollbar p-0.5">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Inventory Control Table -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-slate-50">
+                    <div>
+                        <h3 class="font-black text-slate-900 text-sm sm:text-base">Inventory Products Table</h3>
+                        <p class="text-[11px] text-slate-500">Manage catalog pricing in GH₵, specifications, stock status, and badges.</p>
+                    </div>
+
+                    <div class="relative max-w-xs w-full">
+                        <input type="text" id="adminTableSearch" oninput="renderAdminTable()" placeholder="Search inventory..." class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-frankoGold">
+                        <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-search text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead>
+                            <tr class="bg-slate-100/70 text-slate-500 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-3 px-4 sm:px-6">Product Item</th>
+                                <th class="py-3 px-3 sm:px-4">Category</th>
+                                <th class="py-3 px-3 sm:px-4">Price (GH₵)</th>
+                                <th class="py-3 px-3 sm:px-4">Stock Status</th>
+                                <th class="py-3 px-3 sm:px-4">Badge</th>
+                                <th class="py-3 px-4 sm:px-6 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= REALTIME PRIVATE CHAT WIDGET ================= -->
+    <div id="liveChatWidget" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+        <!-- Chat Toggle Button -->
+        <button onclick="toggleChatWindow()" id="chatToggleBtn" class="bg-frankoBlue hover:bg-frankoBlueDark text-white p-3.5 sm:p-4 rounded-full shadow-2xl flex items-center justify-center relative transition-transform hover:scale-105">
+            <i class="fa-solid fa-headset text-lg sm:text-xl text-frankoGold"></i>
+            <span id="chatUnreadBadge" class="hidden absolute -top-1 -right-1 bg-frankoRed text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">1</span>
+        </button>
+
+        <!-- Chat Window Box -->
+        <div id="chatWindow" class="hidden absolute bottom-14 right-0 w-[calc(100vw-2rem)] sm:w-96 max-w-[360px] bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden transition-all">
+            <!-- Chat Header -->
+            <div class="bg-frankoBlue text-white p-3.5 flex justify-between items-center border-b border-frankoBlueLight">
+                <div class="flex items-center space-x-2">
+                    <div class="w-7 h-7 bg-frankoGold text-slate-950 rounded-full flex items-center justify-center font-black text-xs">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs">Classic Ventures Live Support</h4>
+                        <span class="text-[9px] text-emerald-400 font-semibold flex items-center"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block mr-1"></span> Private & Secure Chat</span>
+                    </div>
+                </div>
+                <button onclick="toggleChatWindow()" class="text-slate-300 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Message Log Body -->
+            <div id="chatMessagesContainer" class="p-3.5 h-64 sm:h-72 overflow-y-auto space-y-3 bg-slate-50 custom-scrollbar text-xs">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Chat Input Footer -->
+            <div class="p-2.5 bg-white border-t border-slate-200 flex items-center space-x-2">
+                <input type="text" id="chatInputMessage" onkeypress="handleChatKeyPress(event)" placeholder="Type message..." class="flex-grow bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-frankoGold">
+                <button onclick="sendChatMessage()" class="bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs transition-all shadow">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODALS & DRAWERS ================= -->
+
+    <!-- 1. VISITOR SIGN UP & SIGN IN MODAL -->
+    <div id="visitorAuthModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-5 sm:p-8 shadow-2xl border border-slate-100 my-4">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                <h3 id="visitorAuthTitle" class="text-base sm:text-lg font-black text-slate-900">Visitor Sign In</h3>
+                <button onclick="closeVisitorAuthModal()" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="visitorAuthFormContainer"></div>
+        </div>
+    </div>
+
+    <!-- 2. VISITOR ACCOUNT / MESSAGES PROFILE MODAL -->
+    <div id="visitorAccountModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-slate-100">
+                <h3 class="text-sm sm:text-base font-black text-slate-950 flex items-center space-x-2">
+                    <i class="fa-solid fa-user-gear text-frankoGold"></i>
+                    <span>My Account & Support Threads</span>
+                </h3>
+                <button onclick="closeVisitorAccountModal()" class="w-7 h-7 bg-slate-100 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="visitorAccountContent" class="space-y-4 overflow-y-auto custom-scrollbar flex-grow pr-0.5">
+                <!-- Rendered via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. STANDARD ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-5 sm:p-8 shadow-2xl border border-slate-100">
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-frankoBlue text-frankoGold rounded-2xl flex items-center justify-center text-xl sm:text-2xl mx-auto mb-2.5 shadow-lg">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-slate-900">Admin Authentication</h3>
+                <p class="text-slate-500 text-xs mt-0.5">Enter your secure master password to access the control panel.</p>
+            </div>
+
+            <form onsubmit="verifyAdminPassword(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Master Password</label>
+                    <div class="relative">
+                        <input type="password" id="adminPasswordInput" required placeholder="Enter password" class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm pr-10">
+                        <button type="button" onclick="togglePasswordVisibility('adminPasswordInput', 'loginPwdIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+                            <i id="loginPwdIcon" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                    <p id="adminAuthError" class="hidden text-xs text-rose-600 font-bold mt-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password.</p>
+                </div>
+                <div class="flex justify-end space-x-2.5 pt-2">
+                    <button type="button" onclick="closeAdminLoginModal()" class="px-3.5 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Cancel</button>
+                    <button type="submit" id="adminLoginSubmitBtn" class="px-5 py-2 bg-frankoBlue text-white font-black rounded-xl text-xs shadow-lg">Unlock Admin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. ENHANCED SECURITY SETTINGS MODAL -->
+    <div id="securitySettingsModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-slate-100">
+                <h3 class="text-sm sm:text-base font-black text-slate-900">Admin Account Security Settings</h3>
+                <button onclick="closeSecuritySettingsModal()" class="w-7 h-7 bg-slate-100 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveAdminCredentialsChange(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Admin Username *</label>
+                    <input type="text" id="newUsernameInput" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Full Name *</label>
+                    <input type="text" id="newAdminFullNameInput" required placeholder="Admin Full Name" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Email Address *</label>
+                    <input type="email" id="newAdminEmailInput" required placeholder="admin@classicventures.gh" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Contact Phone *</label>
+                    <input type="tel" id="newAdminContactInput" required placeholder="0244000000" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Current Password *</label>
+                    <div class="relative">
+                        <input type="password" id="currPwdInput" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs pr-10">
+                        <button type="button" onclick="togglePasswordVisibility('currPwdInput', 'currPwdIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+                            <i id="currPwdIcon" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">New Password (Optional)</label>
+                    <div class="relative">
+                        <input type="password" id="newPwdInput" oninput="checkPasswordStrength(this.value)" minlength="8" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs pr-10">
+                        <button type="button" onclick="togglePasswordVisibility('newPwdInput', 'newPwdIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+                            <i id="newPwdIcon" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                    <!-- Password Strength Meter Bar -->
+                    <div class="mt-1.5 flex items-center space-x-1.5">
+                        <div class="flex-grow h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                            <div id="pwdStrengthBar" class="h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="pwdStrengthText" class="text-[9px] font-bold text-slate-400">Strength</span>
+                    </div>
+                </div>
+                <div class="pt-2.5 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeSecuritySettingsModal()" class="px-3.5 py-1.5 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 bg-frankoBlue text-white font-bold rounded-xl text-xs shadow">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. ADD / EDIT PRODUCT MODAL -->
+    <div id="productModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full p-5 sm:p-8 shadow-2xl border border-slate-100 my-4 sm:my-8">
+            <div class="flex justify-between items-center mb-4 sm:mb-6 pb-3 border-b border-slate-100">
+                <div>
+                    <h3 id="productModalTitle" class="text-lg sm:text-xl font-black text-slate-900">Add New Product</h3>
+                    <p class="text-[11px] text-slate-500">Upload gallery pictures for Quick View rotation.</p>
+                </div>
+                <button onclick="closeProductModal()" class="w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="productForm" onsubmit="saveProductHandler(event)" class="space-y-3.5">
+                <input type="hidden" id="formProductId">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Product Title *</label>
+                        <input type="text" id="formTitle" required placeholder="e.g. Samsung Galaxy S24 Ultra" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Category *</label>
+                        <select id="formCategorySelect" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Brand Name *</label>
+                        <input type="text" id="formBrand" required placeholder="e.g. Samsung" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Price (GH₵) *</label>
+                        <input type="number" step="0.01" id="formPrice" required placeholder="14200.00" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Old Price (GH₵)</label>
+                        <input type="number" step="0.01" id="formOldPrice" placeholder="15500.00" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                    </div>
+
+                    <div class="sm:col-span-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Upload Pictures from Desktop *</label>
+                        <p class="text-[10px] text-slate-400 mb-1.5">Hold Ctrl / Cmd to select multiple image files simultaneously.</p>
+                        <input type="file" id="formDesktopImageFiles" accept="image/*" multiple onchange="handleDesktopImagesUpload(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-frankoBlue file:text-white hover:file:bg-slate-900 cursor-pointer">
+                        <div id="imagePreviewsGrid" class="mt-2.5 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Specifications Summary *</label>
+                        <input type="text" id="formSpecs" required placeholder="e.g. 12GB RAM • 512GB ROM • 200MP" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Stock Quantity *</label>
+                        <input type="number" id="formQuantity" min="0" value="10" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Feature Tag Badge</label>
+                        <select id="formBadge" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm">
+                            <option value="">None</option>
+                            <option value="Best Seller">Best Seller</option>
+                            <option value="New Arrival">New Arrival</option>
+                            <option value="Promo">Promo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-2.5 pt-4 border-t border-slate-100 mt-4">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black rounded-xl text-xs shadow-lg">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. CATEGORY CREATION MODAL -->
+    <div id="categoryModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-slate-100">
+                <h3 class="text-base sm:text-lg font-black text-slate-900">Add Store Category</h3>
+                <button onclick="closeCategoryModal()" class="w-7 h-7 bg-slate-100 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="addCategoryHandler(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Category Name *</label>
+                    <input type="text" id="newCatName" required placeholder="e.g. Smart Watches" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Upload Category Icon (Optional)</label>
+                    <input type="file" id="newCatIconFile" accept="image/*" onchange="handleCatIconUpload(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-2.5 file:rounded-xl file:border-0 file:bg-frankoBlue file:text-white cursor-pointer">
+                    <input type="hidden" id="newCatIconImage">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Or FontAwesome Icon Class</label>
+                    <input type="text" id="newCatIconClass" placeholder="fa-clock" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeCategoryModal()" class="px-3.5 py-1.5 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 bg-frankoBlue text-white font-bold rounded-xl text-xs shadow">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 7. PRODUCT QUICK VIEW MODAL -->
+    <div id="quickViewModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative border border-slate-100 max-h-[90vh] flex flex-col">
+            <button onclick="closeQuickViewModal()" class="absolute top-3 right-3 z-10 w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full flex items-center justify-center shadow text-xs"><i class="fa-solid fa-xmark"></i></button>
+            <div id="quickViewContent" class="p-4 sm:p-8 overflow-y-auto custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- 8. CART DRAWER -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
+            <div class="p-4 sm:p-5 bg-frankoBlue text-white flex justify-between items-center border-b border-frankoBlueLight">
+                <div class="flex items-center space-x-2.5">
+                    <div class="bg-frankoGold text-slate-950 p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm font-bold"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div>
+                        <h3 class="font-black text-xs sm:text-sm">Shopping Cart</h3>
+                        <p class="text-[9px] sm:text-[10px] text-slate-300 uppercase tracking-widest">Mobile Money Checkout</p>
+                    </div>
+                </div>
+                <button onclick="toggleCartDrawer()" class="w-7 h-7 sm:w-8 sm:h-8 bg-frankoBlueDark rounded-full flex items-center justify-center text-slate-300 text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="cartItemsList" class="flex-grow overflow-y-auto p-4 sm:p-5 divide-y divide-slate-100"></div>
+
+            <div id="cartDrawerFooter" class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50">
+                <div class="space-y-1.5 mb-3">
+                    <div class="flex justify-between items-center">
+                        <span class="font-black text-slate-900 text-xs sm:text-sm">Total Amount:</span>
+                        <span id="cartTotalText" class="font-black text-frankoRed text-base sm:text-xl">GH₵ 0.00</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <span class="block text-[10px] sm:text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Select Payment Method</span>
+                    <div class="grid grid-cols-3 gap-1.5 mb-2.5">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="momoNet" value="MTN Mobile Money" checked class="peer sr-only">
+                            <div class="p-1.5 border border-slate-200 rounded-xl text-center peer-checked:border-amber-500 peer-checked:bg-amber-50">
+                                <span class="block font-black text-[10px] text-amber-600">MTN MoMo</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="momoNet" value="Telecel Cash" class="peer sr-only">
+                            <div class="p-1.5 border border-slate-200 rounded-xl text-center peer-checked:border-red-500 peer-checked:bg-red-50">
+                                <span class="block font-black text-[10px] text-red-600">Telecel</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="momoNet" value="AT Money" class="peer sr-only">
+                            <div class="p-1.5 border border-slate-200 rounded-xl text-center peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                                <span class="block font-black text-[10px] text-blue-600">AT Money</span>
+                            </div>
+                        </label>
+                    </div>
+                    <input type="tel" id="checkoutPhone" placeholder="MoMo Number (e.g. 0244123456)" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs mb-2">
+                    <input type="text" id="checkoutAddress" placeholder="Delivery Address / Landmark" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs">
+                </div>
+                <button onclick="processCheckout()" class="w-full bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black py-2.5 sm:py-3 rounded-xl shadow-lg transition-all text-xs sm:text-sm">Simulate Ghana MoMo Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-frankoBlueDark text-white px-4 py-2.5 sm:px-5 sm:py-3.5 rounded-2xl shadow-2xl flex items-center space-x-2.5 text-xs sm:text-sm font-bold border border-frankoBlueLight">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-sm sm:text-base"></i>
+        <span id="toastText">Action completed</span>
+    </div>
+
+    <script>
+        const GHANA_REGIONS = [
+            "Greater Accra Region", "Ashanti Region", "Central Region", "Western Region",
+            "Eastern Region", "Volta Region", "Northern Region", "Upper East Region",
+            "Upper West Region", "Bono Region", "Bono East Region", "Ahafo Region",
+            "Oti Region", "Savannah Region", "North East Region", "Western North Region"
+        ];
+
+        const DEFAULT_CATEGORIES = [
+            { id: "cat-1", name: "Smartphones", icon: "fa-mobile-screen-button" },
+            { id: "cat-2", name: "Laptops & Computers", icon: "fa-laptop" },
+            { id: "cat-3", name: "Tablets & iPads", icon: "fa-tablet-screen-button" },
+            { id: "cat-4", name: "Smart TVs & Audio", icon: "fa-tv" },
+            { id: "cat-5", name: "Home Appliances", icon: "fa-blender" },
+            { id: "cat-6", name: "Kitchen Appliances", icon: "fa-kitchen-set" },
+            { id: "cat-7", name: "Accessories & Power", icon: "fa-headphones" },
+            { id: "cat-8", name: "Gaming & Consoles", icon: "fa-gamepad" }
+        ];
+
+        const DEFAULT_PRODUCTS = [
+            {
+                id: "p-1",
+                title: "iPhone 15 Pro Max 256GB Natural Titanium",
+                category: "Smartphones",
+                brand: "Apple",
+                price: 15499.00,
+                oldPrice: 16800.00,
+                image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80"
+                ],
+                specs: "6.7\" Super Retina XDR • A17 Pro Chip • 48MP Main Camera",
+                stock: "In Stock",
+                quantity: 15,
+                badge: "Best Seller"
+            }
+        ];
+
+        let categories = [];
+        let products = [];
+        let cart = [];
+        let auditLogs = [];
+        let registeredVisitors = []; 
+        let visitorUser = null; 
+        let chatThreads = {}; 
+        let visitorCarts = {}; 
+        let activeCategoryFilter = 'All';
+        let currentView = 'store';
+        
+        let adminConfig = { 
+            username: "ClassicAdmin", 
+            password: "0277330031",
+            fullName: "Master Administrator",
+            email: "admin@classicventures.gh",
+            contact: "+233 24 000 0000"
+        }; 
+        let isAdminAuthenticated = false;
+        let adminInactivityTimer = null;
+
+        function resetAdminInactivityTimer() {
+            if (!isAdminAuthenticated) return;
+            clearTimeout(adminInactivityTimer);
+            adminInactivityTimer = setTimeout(() => {
+                if (isAdminAuthenticated) {
+                    adminLogout();
+                    alert("Admin session locked due to 5 minutes of inactivity.");
+                }
+            }, 5 * 60 * 1000);
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resetAdminInactivityTimer);
+        });
+
+        function logSecurityEvent(action, details) {
+            const timestamp = new Date().toLocaleString();
+            auditLogs.unshift({ action, details, timestamp });
+            if (auditLogs.length > 50) auditLogs.pop();
+            saveState();
+            if (currentView === 'admin') renderAuditLogs();
+        }
+
+        function loadState() {
+            try {
+                categories = JSON.parse(localStorage.getItem('classic_categories')) || [...DEFAULT_CATEGORIES];
+                products = JSON.parse(localStorage.getItem('classic_products')) || [...DEFAULT_PRODUCTS];
+                cart = JSON.parse(localStorage.getItem('classic_cart')) || [];
+                
+                const storedAdmin = JSON.parse(localStorage.getItem('classic_admin_config'));
+                if (storedAdmin) {
+                    adminConfig = storedAdmin;
+                    // FORCE the master password to 0277330031 to prevent old cached states from locking you out
+                    adminConfig.password = "0277330031";
+                } else {
+                    adminConfig.password = "0277330031";
+                    localStorage.setItem('classic_admin_config', JSON.stringify(adminConfig));
+                }
+
+                auditLogs = JSON.parse(localStorage.getItem('classic_audit_logs')) || [];
+                registeredVisitors = JSON.parse(localStorage.getItem('classic_registered_visitors')) || [];
+                visitorUser = JSON.parse(localStorage.getItem('classic_visitor_user')) || null;
+                chatThreads = JSON.parse(localStorage.getItem('classic_chat_threads')) || {};
+                visitorCarts = JSON.parse(localStorage.getItem('classic_visitor_carts')) || {};
+
+                if (visitorUser && visitorCarts[visitorUser.email]) {
+                    cart = visitorCarts[visitorUser.email];
+                }
+            } catch (err) {
+                console.error('Load state error', err);
+            }
+            updateCartBadge();
+            renderVisitorAccountUI();
+            renderChatMessages();
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('classic_categories', JSON.stringify(categories));
+                localStorage.setItem('classic_products', JSON.stringify(products));
+                localStorage.setItem('classic_cart', JSON.stringify(cart));
+                localStorage.setItem('classic_audit_logs', JSON.stringify(auditLogs));
+                localStorage.setItem('classic_registered_visitors', JSON.stringify(registeredVisitors));
+                localStorage.setItem('classic_chat_threads', JSON.stringify(chatThreads));
+                localStorage.setItem('classic_visitor_carts', JSON.stringify(visitorCarts));
+
+                if (visitorUser) {
+                    visitorCarts[visitorUser.email] = cart;
+                    localStorage.setItem('classic_visitor_carts', JSON.stringify(visitorCarts));
+                    localStorage.setItem('classic_visitor_user', JSON.stringify(visitorUser));
+                } else {
+                    localStorage.removeItem('classic_visitor_user');
+                }
+                if (adminConfig) {
+                    adminConfig.password = "0277330031";
+                    localStorage.setItem('classic_admin_config', JSON.stringify(adminConfig));
+                }
+            } catch (err) {
+                console.error('Save state error', err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            renderCategoryCarousel();
+            renderCategoryDropdownSelect();
+            renderSidebarCategories();
+            renderStorefrontGrid();
+            populateCategorySelectDropdown();
+        });
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength(val) {
+            const bar = document.getElementById('pwdStrengthBar');
+            const text = document.getElementById('pwdStrengthText');
+            if (!bar || !text) return;
+
+            if (!val) {
+                bar.style.width = '0%';
+                bar.className = 'h-full transition-all duration-300';
+                text.innerText = 'Strength';
+                return;
+            }
+
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            if (score <= 1) {
+                bar.style.width = '25%';
+                bar.className = 'h-full bg-rose-500 transition-all duration-300';
+                text.innerText = 'Weak';
+                text.className = 'text-[9px] font-bold text-rose-500';
+            } else if (score === 2 || score === 3) {
+                bar.style.width = '65%';
+                bar.className = 'h-full bg-amber-500 transition-all duration-300';
+                text.innerText = 'Moderate';
+                text.className = 'text-[9px] font-bold text-amber-500';
+            } else {
+                bar.style.width = '100%';
+                bar.className = 'h-full bg-emerald-500 transition-all duration-300';
+                text.innerText = 'Strong';
+                text.className = 'text-[9px] font-bold text-emerald-500';
+            }
+        }
+
+        function renderVisitorAccountUI() {
+            const container = document.getElementById('visitorAccountSection');
+            if (!container) return;
+
+            if (visitorUser) {
+                container.innerHTML = `
+                    <div class="flex items-center space-x-1.5 bg-frankoBlueDark px-2 py-1.5 rounded-xl border border-frankoBlueLight text-xs">
+                        <i class="fa-solid fa-user-check text-emerald-400"></i>
+                        <span class="font-bold text-slate-100 truncate max-w-[70px] sm:max-w-[90px] text-[11px]">${visitorUser.name}</span>
+                        <button onclick="openVisitorAccountModal()" title="My Messages" class="text-frankoGold hover:text-white ml-0.5"><i class="fa-solid fa-envelope-open-text"></i></button>
+                        <button onclick="visitorLogout()" title="Logout" class="text-slate-400 hover:text-rose-400 ml-0.5"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="flex items-center space-x-1">
+                        <button onclick="openVisitorAuthModal('login')" class="bg-frankoBlueDark hover:bg-slate-800 text-slate-200 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold border border-frankoBlueLight">Sign In</button>
+                        <button onclick="openVisitorAuthModal('signup')" class="bg-frankoGold hover:bg-frankoGoldDark text-slate-950 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-black">Sign Up</button>
+                    </div>
+                `;
+            }
+        }
+
+        function openVisitorAuthModal(mode = 'login') {
+            const modal = document.getElementById('visitorAuthModal');
+            const title = document.getElementById('visitorAuthTitle');
+            const container = document.getElementById('visitorAuthFormContainer');
+            if (!modal || !container) return;
+
+            if (mode === 'login') {
+                title.innerText = 'Visitor Sign In';
+                container.innerHTML = `
+                    <form onsubmit="handleVisitorLogin(event)" class="space-y-3 mt-2">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-1">Email Address *</label>
+                            <input type="email" id="visitorLoginEmail" required placeholder="registered@email.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-1">Password *</label>
+                            <div class="relative">
+                                <input type="password" id="visitorLoginPassword" required placeholder="Enter password" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs pr-10">
+                                <button type="button" onclick="togglePasswordVisibility('visitorLoginPassword', 'visLoginPwdIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+                                    <i id="visLoginPwdIcon" class="fa-solid fa-eye text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-[11px] pt-1">
+                            <button type="button" onclick="openVisitorAuthModal('forgot')" class="text-amber-600 font-bold hover:underline"><i class="fa-solid fa-key mr-0.5"></i>Forgot?</button>
+                            <button type="button" onclick="openVisitorAuthModal('signup')" class="text-frankoBlue font-bold hover:underline">Create Account</button>
+                        </div>
+                        <div class="pt-2 flex justify-end">
+                            <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-frankoBlue text-white font-black rounded-xl text-xs shadow">Sign In</button>
+                        </div>
+                    </form>
+                `;
+            } else if (mode === 'forgot') {
+                title.innerText = 'Forgot Password Recovery';
+                container.innerHTML = `
+                    <div class="space-y-3 mt-2">
+                        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-900 leading-relaxed">
+                            <p class="font-bold mb-1"><i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Forgot your password?</p>
+                            Only default passwords generated by the admin in their visitor account management page can be used here.
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-1">Your Registered Email *</label>
+                            <input type="email" id="forgotEmailInput" required placeholder="Registered email..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div class="pt-2 flex justify-between items-center">
+                            <button type="button" onclick="openVisitorAuthModal('login')" class="text-xs text-slate-600 font-bold hover:underline">&larr; Back</button>
+                            <button type="button" onclick="handleVisitorForgotPasswordLookup()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-xl text-xs shadow">Check Status</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                title.innerText = 'Visitor Sign Up';
+                container.innerHTML = `
+                    <form onsubmit="handleVisitorSignup(event)" class="space-y-3 mt-1">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Full Name *</label>
+                            <input type="text" id="visitorSignupName" required placeholder="Kwame Mensah" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Email Address *</label>
+                            <input type="email" id="visitorSignupEmail" required placeholder="kwame@gmail.com" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Phone Number *</label>
+                            <input type="tel" id="visitorSignupContact" required placeholder="0244123456" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Town *</label>
+                                <input type="text" id="visitorSignupTown" required placeholder="Adabraka" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">District *</label>
+                                <input type="text" id="visitorSignupDistrict" required placeholder="Accra Metro" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Region *</label>
+                            <select id="visitorSignupRegion" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                                <option value="" disabled selected>Select Region</option>
+                                ${GHANA_REGIONS.map(reg => `<option value="${reg}">${reg}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Password *</label>
+                            <div class="relative">
+                                <input type="password" id="visitorSignupPassword" required minlength="6" placeholder="Password" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs pr-10">
+                                <button type="button" onclick="togglePasswordVisibility('visitorSignupPassword', 'visSignupPwdIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+                                    <i id="visSignupPwdIcon" class="fa-solid fa-eye text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pt-2 flex items-center justify-between">
+                            <button type="button" onclick="openVisitorAuthModal('login')" class="text-[11px] text-frankoBlue font-bold hover:underline">Have account? Sign In</button>
+                            <button type="submit" class="px-4 py-2 bg-frankoGold text-slate-950 font-black rounded-xl text-xs shadow">Register</button>
+                        </div>
+                    </form>
+                `;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeVisitorAuthModal() {
+            document.getElementById('visitorAuthModal')?.classList.add('hidden');
+        }
+
+        function handleVisitorForgotPasswordLookup() {
+            const emailInput = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
+            if (!emailInput) {
+                alert("Please enter your registered email address.");
+                return;
+            }
+
+            const user = registeredVisitors.find(v => v.email === emailInput);
+            if (!user) {
+                alert("No registered account found with this email address.");
+                return;
+            }
+
+            alert(`Account found for ${user.name}!\n\nPlease use the temporary default password generated by the admin in their visitor account management page to sign in.`);
+            openVisitorAuthModal('login');
+            document.getElementById('visitorLoginEmail').value = emailInput;
+        }
+
+        function openVisitorAccountModal() {
+            const modal = document.getElementById('visitorAccountModal');
+            const content = document.getElementById('visitorAccountContent');
+            if (!modal || !content || !visitorUser) return;
+
+            const email = visitorUser.email;
+            const currentRegUser = registeredVisitors.find(v => v.email === email) || {};
+            const myMessages = chatThreads[email] || [];
+
+            content.innerHTML = `
+                <div class="bg-slate-50 p-3.5 rounded-2xl border space-y-2.5">
+                    <div class="flex justify-between items-center border-b pb-1.5">
+                        <h4 class="font-black text-slate-900 text-xs uppercase tracking-wider">Edit My Profile</h4>
+                        <button onclick="deleteMyVisitorAccount()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-xl text-[11px] flex items-center space-x-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+
+                    <form onsubmit="handleVisitorUpdateAccount(event)" class="space-y-2.5">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Full Name *</label>
+                            <input type="text" id="updateVisitorName" required value="${visitorUser.name}" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Email *</label>
+                            <input type="email" id="updateVisitorEmail" required disabled value="${email}" class="w-full px-3 py-1.5 bg-slate-200 text-slate-600 border border-slate-300 rounded-xl text-xs cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Phone *</label>
+                            <input type="tel" id="updateVisitorContact" required value="${currentRegUser.contact || visitorUser.contact || ''}" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Town *</label>
+                                <input type="text" id="updateVisitorTown" required value="${currentRegUser.town || ''}" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">District *</label>
+                                <input type="text" id="updateVisitorDistrict" required value="${currentRegUser.district || ''}" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">Region *</label>
+                            <select id="updateVisitorRegion" required class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs">
+                                ${GHANA_REGIONS.map(reg => `<option value="${reg}" ${currentRegUser.region === reg ? 'selected' : ''}>${reg}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-0.5">New Password (Optional)</label>
+                            <div class="relative">
+                                <input type="password" id="updateVisitorPassword" minlength="6" placeholder="New password" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs pr-10">
+                                <button type="button" onclick="togglePasswordVisibility('updateVisitorPassword', 'updVisPwdIcon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700">
+                                    <i id="updVisPwdIcon" class="fa-solid fa-eye text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pt-1.5 flex justify-end">
+                            <button type="submit" class="bg-frankoBlue hover:bg-slate-900 text-white font-black px-4 py-2 rounded-xl text-xs shadow">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <h4 class="font-black text-slate-900 text-xs mb-1.5">My Direct Support Messages & Admin Replies</h4>
+                    <div class="space-y-2 max-h-36 overflow-y-auto custom-scrollbar p-2 bg-slate-100 rounded-2xl">
+                        ${myMessages.length === 0 ? '<p class="text-[11px] text-slate-400 text-center py-3">No messages yet. Use the live chat widget to talk with support.</p>' : 
+                            myMessages.map(m => `
+                                <div class="p-2.5 rounded-xl text-xs ${m.sender === 'user' ? 'bg-white border text-slate-800 ml-3' : 'bg-frankoBlue text-white mr-3'}">
+                                    <div class="flex justify-between items-center opacity-75 text-[9px] font-black mb-0.5">
+                                        <span>${m.sender === 'user' ? 'You' : 'Classic Support'}</span>
+                                        <span>${m.time}</span>
+                                    </div>
+                                    <p>${m.text}</p>
+                                </div>
+                            `).join('')}
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeVisitorAccountModal() {
+            document.getElementById('visitorAccountModal')?.classList.add('hidden');
+        }
+
+        function handleVisitorSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('visitorSignupName').value.trim();
+            const email = document.getElementById('visitorSignupEmail').value.trim().toLowerCase();
+            const contact = document.getElementById('visitorSignupContact').value.trim();
+            const town = document.getElementById('visitorSignupTown').value.trim();
+            const district = document.getElementById('visitorSignupDistrict').value.trim();
+            const region = document.getElementById('visitorSignupRegion').value;
+            const password = document.getElementById('visitorSignupPassword').value;
+
+            if (registeredVisitors.some(v => v.email === email)) {
+                alert("Account with this email already exists. Please sign in.");
+                openVisitorAuthModal('login');
+                return;
+            }
+
+            registeredVisitors.push({ name, email, contact, town, district, region, password });
+            visitorUser = { name, email, contact, town, district, region };
+            saveState();
+            renderVisitorAccountUI();
+            closeVisitorAuthModal();
+            showToast(`Account created! Welcome, ${name}`, "success");
+        }
+
+        function handleVisitorLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('visitorLoginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('visitorLoginPassword').value;
+
+            const user = registeredVisitors.find(v => v.email === email && v.password === password);
+            if (!user) {
+                alert("Invalid email or password.");
+                return;
+            }
+
+            visitorUser = { name: user.name, email: user.email, contact: user.contact || '', town: user.town || '', district: user.district || '', region: user.region || '' };
+            if (visitorCarts[visitorUser.email]) {
+                cart = visitorCarts[visitorUser.email];
+            } else {
+                visitorCarts[visitorUser.email] = cart;
+            }
+
+            saveState();
+            updateCartBadge();
+            renderVisitorAccountUI();
+            closeVisitorAuthModal();
+            renderChatMessages();
+            showToast(`Welcome back, ${user.name}!`, "success");
+        }
+
+        function handleVisitorUpdateAccount(e) {
+            e.preventDefault();
+            if (!visitorUser) return;
+
+            const email = visitorUser.email;
+            const name = document.getElementById('updateVisitorName').value.trim();
+            const contact = document.getElementById('updateVisitorContact').value.trim();
+            const town = document.getElementById('updateVisitorTown').value.trim();
+            const district = document.getElementById('updateVisitorDistrict').value.trim();
+            const region = document.getElementById('updateVisitorRegion').value;
+            const newPassword = document.getElementById('updateVisitorPassword').value;
+
+            const regUser = registeredVisitors.find(v => v.email === email);
+            if (regUser) {
+                regUser.name = name;
+                regUser.contact = contact;
+                regUser.town = town;
+                regUser.district = district;
+                regUser.region = region;
+                if (newPassword && newPassword.length >= 6) {
+                    regUser.password = newPassword;
+                }
+            }
+
+            visitorUser.name = name;
+            visitorUser.contact = contact;
+            visitorUser.town = town;
+            visitorUser.district = district;
+            visitorUser.region = region;
+
+            saveState();
+            renderVisitorAccountUI();
+            closeVisitorAccountModal();
+            showToast("Account updated successfully!", "success");
+        }
+
+        function visitorLogout() {
+            visitorUser = null;
+            cart = [];
+            saveState();
+            updateCartBadge();
+            renderVisitorAccountUI();
+            renderChatMessages();
+            showToast("Signed out", "info");
+        }
+
+        function deleteMyVisitorAccount() {
+            if (!visitorUser) return;
+            if (confirm("Are you sure you want to permanently delete your account and support threads?")) {
+                const email = visitorUser.email;
+                registeredVisitors = registeredVisitors.filter(v => v.email !== email);
+                delete chatThreads[email];
+                delete visitorCarts[email];
+                visitorUser = null;
+                cart = [];
+                saveState();
+                updateCartBadge();
+                closeVisitorAccountModal();
+                renderVisitorAccountUI();
+                renderChatMessages();
+                showToast("Your account has been deleted.", "info");
+            }
+        }
+
+        function renderAdminVisitorAccounts() {
+            const container = document.getElementById('adminVisitorListContainer');
+            const badge = document.getElementById('adminVisitorCountBadge');
+            if (!container) return;
+
+            if (badge) badge.innerText = `${registeredVisitors.length} visitors`;
+
+            if (registeredVisitors.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No registered visitors yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = registeredVisitors.map(v => {
+                const userCart = visitorCarts[v.email] || [];
+                const cartTotal = userCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+                return `
+                    <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-black text-slate-900 text-xs">${v.name}</span>
+                                    <span class="text-[10px] text-slate-500 font-mono">(${v.email})</span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                                    <span class="inline-flex items-center text-[9px] sm:text-[10px] text-amber-900 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                        <i class="fa-solid fa-phone mr-1"></i>${v.contact || 'No contact'}
+                                    </span>
+                                    <span class="inline-flex items-center text-[9px] sm:text-[10px] text-frankoBlue font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                                        <i class="fa-solid fa-location-dot mr-1"></i>${v.town || 'Town'}, ${v.district || 'District'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1.5 w-full sm:w-auto justify-end">
+                                <button onclick="adminGenerateDefaultPassword('${v.email}')" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold px-2.5 py-1 rounded-xl text-xs transition-all shadow-sm flex items-center space-x-1">
+                                    <i class="fa-solid fa-key"></i>
+                                    <span>Default Pass</span>
+                                </button>
+                                <button onclick="adminDeleteVisitorAccount('${v.email}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-xl text-xs transition-all shadow-sm flex items-center space-x-1">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Visitor Cart Items Inspector & Clear Cart Control -->
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="font-bold text-[10px] sm:text-[11px] text-slate-700 uppercase tracking-wider flex items-center">
+                                    <i class="fa-solid fa-cart-shopping text-frankoGold mr-1"></i> Cart Items (${userCart.reduce((s, i) => s + i.qty, 0)})
+                                </span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-black text-xs text-frankoRed">GH₵ ${cartTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                                    ${userCart.length > 0 ? `
+                                        <button onclick="adminClearVisitorCart('${v.email}')" title="Clear customer cart" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-0.5 rounded-lg text-[10px] font-bold border border-rose-200 transition-all flex items-center space-x-1">
+                                            <i class="fa-solid fa-cart-xmark"></i>
+                                            <span>Clear Cart</span>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ${userCart.length === 0 ? '<p class="text-[10px] text-slate-400 italic">Cart is empty.</p>' : `
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 mt-1.5">
+                                    ${userCart.map(item => `
+                                        <div class="bg-slate-50 p-1.5 rounded-lg border flex items-center justify-between text-xs gap-1.5">
+                                            <div class="flex items-center space-x-1.5 overflow-hidden">
+                                                <img src="${item.image}" class="w-7 h-7 object-contain bg-white rounded border p-0.5 flex-shrink-0">
+                                                <div class="overflow-hidden">
+                                                    <h6 class="font-bold text-[10px] text-slate-900 truncate">${item.title}</h6>
+                                                    <span class="text-[9px] text-slate-500">Qty: ${item.qty}</span>
+                                                </div>
+                                            </div>
+                                            <button onclick="quickViewProduct('${item.id}')" title="Quick View" class="bg-frankoBlue text-white hover:bg-slate-900 p-1 rounded-lg flex-shrink-0 text-[10px]">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function adminClearVisitorCart(email) {
+            if (confirm(`Are you sure you want to clear the shopping cart for ${email}?`)) {
+                visitorCarts[email] = [];
+                if (visitorUser && visitorUser.email === email) {
+                    cart = [];
+                    updateCartBadge();
+                    if (!document.getElementById('cartDrawer').classList.contains('hidden')) {
+                        renderCartList();
+                    }
+                }
+                saveState();
+                renderAdminDashboard();
+                logSecurityEvent("Visitor Cart Cleared", `Admin cleared shopping cart for ${email}`);
+                showToast(`Cleared cart for ${email}`, "info");
+            }
+        }
+
+        function adminGenerateDefaultPassword(email) {
+            const user = registeredVisitors.find(v => v.email === email);
+            if (!user) return;
+
+            const defaultPass = 'Classic@' + Math.floor(1000 + Math.random() * 9000);
+            user.password = defaultPass;
+            saveState();
+
+            logSecurityEvent("Visitor Password Reset", `Generated default password for ${email}`);
+            alert(`Default password generated for ${user.name} (${email}):\n\nPassword: ${defaultPass}\n\nPlease share this secure temporary password with the customer.`);
+            showToast(`Default password generated for ${user.name}`, "success");
+        }
+
+        function adminDeleteVisitorAccount(email) {
+            if (confirm(`Are you sure you want to delete the visitor account (${email}) and their chat/cart history?`)) {
+                registeredVisitors = registeredVisitors.filter(v => v.email !== email);
+                delete chatThreads[email];
+                delete visitorCarts[email];
+                if (visitorUser && visitorUser.email === email) {
+                    visitorUser = null;
+                    cart = [];
+                    updateCartBadge();
+                    renderVisitorAccountUI();
+                    renderChatMessages();
+                }
+                saveState();
+                renderAdminDashboard();
+                logSecurityEvent("Visitor Account Deleted", `Deleted visitor account ${email}`);
+                showToast("Visitor account deleted by admin.", "info");
+            }
+        }
+
+        let uploadedGalleryImagesTemp = [];
+
+        function handleDesktopImagesUpload(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+
+            uploadedGalleryImagesTemp = [];
+            const previewsGrid = document.getElementById('imagePreviewsGrid');
+            previewsGrid.innerHTML = '';
+
+            let loadedCount = 0;
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const base64 = evt.target.result;
+                    uploadedGalleryImagesTemp.push(base64);
+
+                    previewsGrid.innerHTML += `
+                        <div class="relative w-14 h-14 bg-white rounded-xl border p-1 flex items-center justify-center">
+                            <img src="${base64}" class="max-h-full max-w-full object-contain">
+                            ${index === 0 ? '<span class="absolute -top-2 -left-1 bg-frankoGold text-[8px] font-black px-1 rounded">Main</span>' : ''}
+                        </div>
+                    `;
+
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        showToast(`${files.length} pictures uploaded successfully!`, "success");
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        let catIconImageTemp = '';
+
+        function handleCatIconUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                catIconImageTemp = evt.target.result;
+                document.getElementById('newCatIconImage').value = catIconImageTemp;
+                showToast("Category icon uploaded!", "success");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleChatWindow() {
+            const win = document.getElementById('chatWindow');
+            const badge = document.getElementById('chatUnreadBadge');
+            if (!win) return;
+            win.classList.toggle('hidden');
+            if (!win.classList.contains('hidden') && badge) badge.classList.add('hidden');
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function sendChatMessage() {
+            if (!visitorUser) {
+                alert("Please sign in or sign up first to use live chat support.");
+                toggleChatWindow();
+                openVisitorAuthModal('login');
+                return;
+            }
+
+            const input = document.getElementById('chatInputMessage');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            const email = visitorUser.email;
+            const contact = visitorUser.contact || 'No contact provided';
+            const location = `${visitorUser.town || ''}, ${visitorUser.district || ''} (${visitorUser.region || ''})`;
+            if (!chatThreads[email]) chatThreads[email] = [];
+
+            chatThreads[email].push({
+                sender: 'user',
+                name: visitorUser.name,
+                contact: contact,
+                location: location,
+                text,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            });
+
+            input.value = '';
+            saveState();
+            renderChatMessages();
+            if (currentView === 'admin') renderAdminChatInbox();
+
+            setTimeout(() => {
+                chatThreads[email].push({
+                    sender: 'support',
+                    name: 'Classic Support',
+                    text: "Thank you for your message! Our admin team has received it and will reply here.",
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                });
+                saveState();
+                renderChatMessages();
+                if (currentView === 'admin') renderAdminChatInbox();
+            }, 1000);
+        }
+
+        function renderChatMessages() {
+            const container = document.getElementById('chatMessagesContainer');
+            if (!container) return;
+
+            if (!visitorUser) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-6 text-xs">Please sign in to chat privately with our support team.</p>`;
+                return;
+            }
+
+            const email = visitorUser.email;
+            const messages = chatThreads[email] || [];
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="flex items-start space-x-2">
+                        <div class="bg-frankoBlue text-white p-2.5 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm">
+                            <p>Akwaaba! Welcome to Classic Ventures. How can we help you today?</p>
+                            <span class="text-[9px] text-slate-300 block mt-1 text-right">Support</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(m => {
+                if (m.sender === 'user') {
+                    return `
+                        <div class="flex justify-end">
+                            <div class="bg-frankoGold text-slate-950 font-medium p-2.5 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm">
+                                <p>${m.text}</p>
+                                <span class="text-[9px] text-slate-700 block mt-1 text-right">${m.time}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="flex items-start space-x-2">
+                            <div class="bg-frankoBlue text-white p-2.5 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm">
+                                <p>${m.text}</p>
+                                <span class="text-[9px] text-slate-300 block mt-1 text-right">${m.time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderAdminChatInbox() {
+            const container = document.getElementById('adminChatInboxContainer');
+            const unreadBadge = document.getElementById('adminUnreadMsgCount');
+            if (!container) return;
+
+            const emails = Object.keys(chatThreads);
+            if (emails.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No customer messages received yet.</p>`;
+                if (unreadBadge) unreadBadge.innerText = '0';
+                return;
+            }
+
+            let totalMsgs = 0;
+            container.innerHTML = emails.map(email => {
+                const thread = chatThreads[email];
+                totalMsgs += thread.length;
+                const lastMsg = thread[thread.length - 1];
+                const userName = thread.find(t => t.name)?.name || email;
+
+                return `
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="flex items-center space-x-1.5">
+                                <span class="font-black text-slate-900 text-xs">${userName}</span>
+                                <span class="text-[10px] text-slate-500 font-mono">(${email})</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-0.5 line-clamp-1"><strong class="text-slate-800">${lastMsg.sender === 'user' ? 'Customer' : 'Admin'}:</strong> ${lastMsg.text}</p>
+                        </div>
+                        <button onclick="openAdminChatThread('${email}')" class="bg-frankoBlue hover:bg-slate-900 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition-all shadow flex-shrink-0">
+                            Reply (${thread.length})
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            if (unreadBadge) unreadBadge.innerText = `${totalMsgs}`;
+        }
+
+        function openAdminChatThread(email) {
+            const container = document.getElementById('adminChatInboxContainer');
+            const replyWrapper = document.getElementById('adminReplyBoxWrapper');
+            const targetInput = document.getElementById('adminReplyTargetUser');
+            if (!container || !replyWrapper) return;
+
+            targetInput.value = email;
+            replyWrapper.classList.remove('hidden');
+
+            const thread = chatThreads[email] || [];
+            const userName = thread.find(t => t.name)?.name || email;
+
+            container.innerHTML = `
+                <div class="mb-2 flex items-center justify-between border-b pb-1.5">
+                    <span class="font-bold text-xs text-frankoBlue">Chat Thread with ${userName}</span>
+                    <button onclick="renderAdminChatInbox()" class="text-xs text-frankoRed font-bold hover:underline">&larr; Back</button>
+                </div>
+                <div class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar p-2 bg-slate-100 rounded-xl">
+                    ${thread.map(m => `
+                        <div class="p-2.5 rounded-xl text-xs ${m.sender === 'user' ? 'bg-white border text-slate-800 ml-3' : 'bg-frankoBlue text-white mr-3'}">
+                            <div class="flex justify-between items-center opacity-75 text-[9px] font-black mb-0.5">
+                                <span>${m.sender === 'user' ? userName : 'Admin'}</span>
+                                <span>${m.time}</span>
+                            </div>
+                            <p>${m.text}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function sendAdminReplyMessage() {
+            const targetEmail = document.getElementById('adminReplyTargetUser').value;
+            const input = document.getElementById('adminReplyInput');
+            if (!targetEmail || !input) return;
+
+            const text = input.value.trim();
+            if (!text) return;
+
+            if (!chatThreads[targetEmail]) chatThreads[targetEmail] = [];
+
+            chatThreads[targetEmail].push({
+                sender: 'support',
+                name: 'Classic Admin',
+                text,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            });
+
+            input.value = '';
+            saveState();
+            openAdminChatThread(targetEmail);
+            renderChatMessages();
+            showToast("Reply sent!", "success");
+        }
+
+        function adminClearAllChats() {
+            if (confirm("Are you sure you want to clear all customer chat threads?")) {
+                chatThreads = {};
+                saveState();
+                renderAdminChatInbox();
+                renderChatMessages();
+                document.getElementById('adminReplyBoxWrapper')?.classList.add('hidden');
+                logSecurityEvent("Chats Cleared", "Admin cleared all customer chat threads");
+                showToast("All chat threads cleared!", "info");
+            }
+        }
+
+        function renderCategoryCarousel() {
+            const container = document.getElementById('categoryBannerList');
+            if (!container) return;
+            
+            let html = `
+                <button onclick="filterByCategory('All')" class="px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${activeCategoryFilter === 'All' ? 'bg-frankoBlue text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}">
+                    <i class="fa-solid fa-border-all text-xs"></i>
+                    <span>All Items</span>
+                </button>
+            `;
+
+            categories.forEach(cat => {
+                const isSelected = activeCategoryFilter === cat.name;
+                const iconHtml = cat.imageIcon ? `<img src="${cat.imageIcon}" class="w-3.5 h-3.5 object-contain rounded">` : `<i class="fa-solid ${cat.icon || 'fa-tag'} text-frankoGold text-xs"></i>`;
+                html += `
+                    <button onclick="filterByCategory('${cat.name}')" class="px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 ${isSelected ? 'bg-frankoBlue text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}">
+                        ${iconHtml}
+                        <span>${cat.name}</span>
+                    </button>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderSidebarCategories() {
+            const container = document.getElementById('sidebarCategoryList');
+            if (!container) return;
+
+            let html = `
+                <button onclick="filterByCategory('All')" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all flex justify-between items-center ${activeCategoryFilter === 'All' ? 'bg-frankoBlue text-white' : 'text-slate-600 hover:bg-slate-100'}">
+                    <span>All Items</span>
+                    <span class="text-[10px] opacity-75">${products.length}</span>
+                </button>
+            `;
+
+            categories.forEach(cat => {
+                const count = products.filter(p => p.category === cat.name).length;
+                const isSelected = activeCategoryFilter === cat.name;
+                html += `
+                    <button onclick="filterByCategory('${cat.name}')" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all flex justify-between items-center ${isSelected ? 'bg-frankoBlue text-white' : 'text-slate-600 hover:bg-slate-100'}">
+                        <span class="truncate">${cat.name}</span>
+                        <span class="text-[10px] opacity-75">${count}</span>
+                    </button>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderCategoryDropdownSelect() {
+            const select = document.getElementById('categoryDropdownSelect');
+            if (!select) return;
+            let html = `<option value="All" ${activeCategoryFilter === 'All' ? 'selected' : ''}>All Products (${products.length})</option>`;
+            categories.forEach(cat => {
+                html += `<option value="${cat.name}" ${activeCategoryFilter === cat.name ? 'selected' : ''}>${cat.name}</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function handleCategoryDropdownChange(val) { filterByCategory(val); }
+
+        function filterByCategory(catName) {
+            activeCategoryFilter = catName;
+            document.getElementById('activeCategoryTitle').innerText = catName;
+            renderCategoryCarousel();
+            renderSidebarCategories();
+            renderStorefrontGrid();
+        }
+
+        function resetAllFilters() {
+            document.getElementById('minPriceInput').value = '';
+            document.getElementById('maxPriceInput').value = '';
+            document.getElementById('inStockOnlyCheckbox').checked = false;
+            filterByCategory('All');
+        }
+
+        function applyFilters() { renderStorefrontGrid(); }
+
+        function getFilteredProducts() {
+            let filtered = [...products];
+            if (activeCategoryFilter !== 'All') filtered = filtered.filter(p => p.category === activeCategoryFilter);
+
+            const searchVal = (document.getElementById('globalSearchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').toLowerCase().trim();
+            if (searchVal) {
+                filtered = filtered.filter(p => p.title.toLowerCase().includes(searchVal) || p.brand.toLowerCase().includes(searchVal));
+            }
+            return filtered;
+        }
+
+        function renderStorefrontGrid() {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyStorefrontState');
+            if (!grid) return;
+
+            const filteredList = getFilteredProducts();
+            document.getElementById('productCountBadge').innerText = `(${filteredList.length})`;
+
+            if (filteredList.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filteredList.map(prod => {
+                const isInStock = (prod.quantity || 0) > 0;
+                const stockBadgeText = isInStock ? 'In Stock' : 'Out of Stock';
+                const stockBadgeClass = isInStock ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white';
+
+                return `
+                    <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col group">
+                        <div class="relative bg-slate-50 p-3 sm:p-4 aspect-square flex items-center justify-center overflow-hidden">
+                            ${prod.badge ? `<span class="absolute top-2.5 left-2.5 bg-frankoRed text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow-md z-10">${prod.badge}</span>` : ''}
+                            
+                            <span class="absolute bottom-2.5 left-2.5 text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow-md z-10 ${stockBadgeClass}">
+                                <i class="fa-solid ${isInStock ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-1"></i>${stockBadgeText}
+                            </span>
+
+                            <img src="${prod.image}" alt="${prod.title}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/400x400/0f2a4a/ffffff?text=Classic'">
+                            <button onclick="quickViewProduct('${prod.id}')" class="absolute bottom-2.5 right-2.5 bg-white/90 hover:bg-white text-slate-800 p-2 rounded-xl text-xs font-bold shadow-md opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="p-3.5 sm:p-5 flex flex-col flex-grow">
+                            <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">${prod.brand} • ${prod.category}</span>
+                            <h4 onclick="quickViewProduct('${prod.id}')" class="font-bold text-slate-900 text-xs sm:text-sm mt-1 mb-1.5 line-clamp-2 hover:text-frankoRed cursor-pointer">${prod.title}</h4>
+                            <p class="text-[10px] sm:text-[11px] text-slate-500 line-clamp-2 mb-3 flex-grow">${prod.specs}</p>
+                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between mt-auto">
+                                <div>
+                                    <span class="text-sm sm:text-base font-black text-slate-900 block">GH₵ ${prod.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                                    ${prod.oldPrice ? `<span class="text-[10px] text-slate-400 line-through">GH₵ ${prod.oldPrice.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : ''}
+                                </div>
+                                <button onclick="addToCart('${prod.id}')" class="bg-frankoBlue hover:bg-slate-900 text-white px-2.5 py-1.5 sm:p-3 rounded-xl text-xs font-bold shadow-md flex items-center space-x-1">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                    <span class="inline">Add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addToCart(productId) {
+            const prod = products.find(p => p.id === productId);
+            if (!prod) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) existing.qty += 1;
+            else cart.push({ ...prod, qty: 1 });
+
+            if (visitorUser) {
+                visitorCarts[visitorUser.email] = cart;
+            }
+
+            saveState();
+            updateCartBadge();
+            showToast(`Added to cart!`, 'success');
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartCountBadge');
+            if (badge) badge.innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+        }
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            if (!drawer) return;
+            drawer.classList.toggle('hidden');
+            if (!drawer.classList.contains('hidden')) renderCartList();
+        }
+
+        function renderCartList() {
+            const list = document.getElementById('cartItemsList');
+            const totalText = document.getElementById('cartTotalText');
+            if (!list) return;
+
+            if (cart.length === 0) {
+                list.innerHTML = `<div class="text-center py-10"><p class="text-slate-500 font-bold text-xs">Shopping cart is empty.</p></div>`;
+                if (totalText) totalText.innerText = 'GH₵ 0.00';
+                return;
+            }
+
+            let total = 0;
+            list.innerHTML = cart.map(item => {
+                total += item.price * item.qty;
+                return `
+                    <div class="py-3 flex items-center justify-between gap-2.5">
+                        <img src="${item.image}" class="w-10 h-10 object-contain bg-slate-50 rounded-xl p-1 border flex-shrink-0">
+                        <div class="flex-grow min-w-0">
+                            <h5 class="font-bold text-xs text-slate-900 truncate">${item.title}</h5>
+                            <span class="text-[11px] font-black text-slate-600">GH₵ ${item.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <div class="flex items-center space-x-1.5 flex-shrink-0">
+                            <button onclick="changeCartQty('${item.id}', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                            <span class="text-xs font-bold">${item.qty}</span>
+                            <button onclick="changeCartQty('${item.id}', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            if (totalText) totalText.innerText = `GH₵ ${total.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        }
+
+        function changeCartQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+
+            if (visitorUser) {
+                visitorCarts[visitorUser.email] = cart;
+            }
+
+            saveState();
+            updateCartBadge();
+            renderCartList();
+        }
+
+        function processCheckout() {
+            if (!visitorUser) {
+                alert("Please sign in or sign up first to complete checkout.");
+                toggleCartDrawer();
+                openVisitorAuthModal('login');
+                return;
+            }
+
+            const phone = document.getElementById('checkoutPhone')?.value || visitorUser.contact;
+            const address = document.getElementById('checkoutAddress')?.value;
+            if (!phone || !address) {
+                alert("Please enter MoMo number and delivery address.");
+                return;
+            }
+
+            alert(`Order Successful for ${visitorUser.name}!\nMoMo prompt sent to ${phone}.`);
+            cart = [];
+            if (visitorUser) visitorCarts[visitorUser.email] = cart;
+            saveState();
+            updateCartBadge();
+            toggleCartDrawer();
+            showToast("Order placed successfully!", "success");
+        }
+
+        function quickViewProduct(id) {
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+
+            const content = document.getElementById('quickViewContent');
+            const modal = document.getElementById('quickViewModal');
+            if (!content || !modal) return;
+
+            const productImages = (prod.images && prod.images.length > 0) ? prod.images : [prod.image];
+            const isInStock = (prod.quantity || 0) > 0;
+
+            content.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-start pb-4 border-b">
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-center border h-56 sm:h-72 relative">
+                            <span class="absolute top-2 left-2 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow z-10 ${isInStock ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">
+                                <i class="fa-solid ${isInStock ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-1"></i>${isInStock ? 'In Stock' : 'Out of Stock'}
+                            </span>
+                            <img id="mainQuickViewImg" src="${productImages[0]}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <div class="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar">
+                            ${productImages.map((imgUrl) => `
+                                <button onclick="document.getElementById('mainQuickViewImg').src='${imgUrl}'" class="w-12 h-12 rounded-xl border-2 border-slate-200 bg-slate-50 p-1 flex-shrink-0 flex items-center justify-center overflow-hidden hover:border-frankoGold">
+                                    <img src="${imgUrl}" class="max-h-full max-w-full object-contain">
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${prod.brand} • ${prod.category}</span>
+                            <h3 class="text-base sm:text-lg font-black text-slate-900 mt-1 mb-1.5">${prod.title}</h3>
+                            <p class="text-xs text-slate-600 mb-3">${prod.specs}</p>
+                            <span class="text-xl sm:text-2xl font-black text-slate-900 block">GH₵ ${prod.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <button onclick="addToCart('${prod.id}'); closeQuickViewModal();" class="mt-4 sm:mt-6 bg-frankoGold hover:bg-frankoGoldDark text-slate-950 font-black py-2.5 sm:py-3 rounded-xl text-xs shadow-lg w-full">Add To Cart</button>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeQuickViewModal() { document.getElementById('quickViewModal')?.classList.add('hidden'); }
+
+        function handleGlobalSearch() { renderStorefrontGrid(); }
+        function clearSearch() {
+            document.getElementById('globalSearchInput').value = '';
+            renderStorefrontGrid();
+        }
+
+        function switchView(viewName) {
+            currentView = viewName;
+            const storeView = document.getElementById('storefrontView');
+            const adminView = document.getElementById('adminPortalView');
+            if (viewName === 'admin') {
+                if (!isAdminAuthenticated) {
+                    handleAdminPortalClick();
+                    return;
+                }
+                storeView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+                renderAdminDashboard();
+            } else {
+                adminView.classList.add('hidden');
+                storeView.classList.remove('hidden');
+                renderStorefrontGrid();
+            }
+        }
+
+        function handleAdminPortalClick() {
+            if (currentView === 'admin') { switchView('store'); return; }
+            if (isAdminAuthenticated) { 
+                switchView('admin'); 
+            } else { 
+                document.getElementById('adminLoginModal')?.classList.remove('hidden'); 
+            }
+        }
+
+        function verifyAdminPassword(e) {
+            e.preventDefault();
+            const pwdInput = document.getElementById('adminPasswordInput').value;
+            if (adminConfig && pwdInput === adminConfig.password) {
+                isAdminAuthenticated = true;
+                document.getElementById('adminAuthError')?.classList.add('hidden');
+                document.getElementById('adminLoginModal')?.classList.add('hidden');
+                document.getElementById('adminPasswordInput').value = '';
+                logSecurityEvent("Admin Login", "Admin successfully authenticated session");
+                switchView('admin');
+                showToast("Admin authenticated successfully!", "success");
+            } else {
+                document.getElementById('adminAuthError')?.classList.remove('hidden');
+                logSecurityEvent("Failed Admin Login", "Incorrect master password attempt");
+            }
+        }
+
+        function adminLogout() {
+            isAdminAuthenticated = false;
+            clearTimeout(adminInactivityTimer);
+            logSecurityEvent("Admin Logout", "Admin signed out of secure session");
+            switchView('store');
+            showToast("Logged out of admin", "info");
+        }
+
+        function closeAdminLoginModal() { document.getElementById('adminLoginModal')?.classList.add('hidden'); }
+        
+        function openSecuritySettingsModal() {
+            document.getElementById('newUsernameInput').value = adminConfig.username || '';
+            document.getElementById('newAdminFullNameInput').value = adminConfig.fullName || '';
+            document.getElementById('newAdminEmailInput').value = adminConfig.email || '';
+            document.getElementById('newAdminContactInput').value = adminConfig.contact || '';
+            document.getElementById('currPwdInput').value = '';
+            document.getElementById('newPwdInput').value = '';
+            checkPasswordStrength('');
+            document.getElementById('securitySettingsModal')?.classList.remove('hidden');
+        }
+
+        function closeSecuritySettingsModal() { document.getElementById('securitySettingsModal')?.classList.add('hidden'); }
+
+        function saveAdminCredentialsChange(e) {
+            e.preventDefault();
+            const newUsername = document.getElementById('newUsernameInput').value.trim();
+            const newFullName = document.getElementById('newAdminFullNameInput').value.trim();
+            const newEmail = document.getElementById('newAdminEmailInput').value.trim();
+            const newContact = document.getElementById('newAdminContactInput').value.trim();
+            const currP = document.getElementById('currPwdInput').value;
+            const newP = document.getElementById('newPwdInput').value;
+
+            if (currP !== adminConfig.password) { 
+                alert("Incorrect current password. Security settings update rejected."); 
+                logSecurityEvent("Security Update Rejected", "Incorrect current password provided");
+                return; 
+            }
+
+            if (newP && newP.length < 8) {
+                alert("New password must be at least 8 characters long.");
+                return;
+            }
+
+            adminConfig.username = newUsername;
+            adminConfig.fullName = newFullName;
+            adminConfig.email = newEmail;
+            adminConfig.contact = newContact;
+            if (newP) adminConfig.password = newP;
+
+            saveState();
+            closeSecuritySettingsModal();
+            renderAdminDashboard();
+            logSecurityEvent("Admin Security Updated", `Updated profile credentials for ${newUsername}`);
+            showToast("Admin security settings and profile details updated!", "success");
+        }
+
+        function renderAdminDashboard() {
+            if (adminConfig) {
+                document.getElementById('adminDisplayUsername').innerText = adminConfig.username;
+                document.getElementById('adminDisplayContact').innerText = adminConfig.contact || 'No contact';
+                document.getElementById('adminDisplayEmail').innerText = adminConfig.email || 'No email';
+            }
+            updateAdminStats();
+            renderAdvancedStockPanel();
+            renderAdminTable();
+            renderAdminChatInbox();
+            renderAdminVisitorAccounts();
+            renderAuditLogs();
+        }
+
+        function updateAdminStats() {
+            document.getElementById('adminStatTotal').innerText = products.length;
+            document.getElementById('adminStatValuation').innerText = `GH₵ ${products.reduce((s, p) => s + p.price, 0).toLocaleString()}`;
+            document.getElementById('adminStatInStock').innerText = products.filter(p => (p.quantity || 0) > 0).length;
+            document.getElementById('adminStatLowStock').innerText = products.filter(p => (p.quantity || 0) <= 0).length;
+        }
+
+        function renderAdvancedStockPanel() {
+            const container = document.getElementById('advancedStockGrid');
+            const filterVal = document.getElementById('advStockFilterSelect')?.value || 'all';
+            if (!container) return;
+
+            let filteredList = [...products];
+            if (filterVal === 'low') {
+                filteredList = filteredList.filter(p => (p.quantity || 0) <= 0);
+            }
+
+            if (filteredList.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 col-span-full">No products found matching stock filter criteria.</p>`;
+                return;
+            }
+
+            container.innerHTML = filteredList.map(prod => {
+                const qty = prod.quantity || 0;
+                const isInStock = qty > 0;
+
+                return `
+                    <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border flex flex-col justify-between space-y-2.5 shadow-sm hover:border-frankoGold transition-all">
+                        <div class="flex items-center space-x-2.5">
+                            <img src="${prod.image}" class="w-10 h-10 object-contain rounded-xl border p-0.5 bg-white flex-shrink-0">
+                            <div class="flex-grow min-w-0">
+                                <h5 class="font-bold text-xs text-slate-900 truncate">${prod.title}</h5>
+                                <span class="text-[10px] text-slate-500">${prod.brand}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                            <div>
+                                <span class="block text-[9px] font-bold text-slate-500 uppercase">Quantity</span>
+                                <div class="flex items-center space-x-1 mt-0.5">
+                                    <button onclick="adjustProductQuantity('${prod.id}', -1)" class="w-6 h-6 bg-white border rounded text-xs font-bold hover:bg-slate-100">-</button>
+                                    <input type="number" min="0" value="${qty}" onchange="setProductQuantity('${prod.id}', this.value)" class="w-12 px-1 py-0.5 bg-white border rounded text-xs font-bold text-center">
+                                    <button onclick="adjustProductQuantity('${prod.id}', 1)" class="w-6 h-6 bg-white border rounded text-xs font-bold hover:bg-slate-100">+</button>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-[9px] font-bold text-slate-500 uppercase">Status</span>
+                                <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${!isInStock ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                                    ${!isInStock ? 'Out of Stock' : 'In Stock'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function adjustProductQuantity(id, delta) {
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+            prod.quantity = Math.max(0, (prod.quantity || 0) + delta);
+            saveState();
+            renderAdminDashboard();
+            showToast(`Updated quantity for ${prod.title}`, "success");
+        }
+
+        function setProductQuantity(id, val) {
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+            prod.quantity = Math.max(0, parseInt(val) || 0);
+            saveState();
+            renderAdminDashboard();
+            showToast(`Updated quantity for ${prod.title}`, "success");
+        }
+
+        function bulkRestockAll(amount) {
+            products.forEach(p => {
+                p.quantity = (p.quantity || 0) + amount;
+            });
+            saveState();
+            renderAdminDashboard();
+            logSecurityEvent("Bulk Restock", `Added +${amount} stock to all inventory items`);
+            showToast(`Successfully added +${amount} stock to all catalog items!`, "success");
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = products.map(prod => {
+                const qty = prod.quantity || 0;
+                const isInStock = qty > 0;
+                const stockText = isInStock ? 'In Stock' : 'Out of Stock';
+
+                return `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4 sm:px-6 flex items-center space-x-2.5">
+                            <img src="${prod.image}" class="w-8 h-8 object-contain rounded border p-0.5 bg-slate-50 flex-shrink-0">
+                            <div class="min-w-0">
+                                <h5 class="font-bold text-xs text-slate-900 truncate max-w-[150px] sm:max-w-none">${prod.title}</h5>
+                                <span class="text-[9px] text-slate-400">${prod.brand} • Qty: ${qty}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3 sm:px-4 text-xs font-semibold">${prod.category}</td>
+                        <td class="py-3 px-3 sm:px-4 text-xs font-black">GH₵ ${prod.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td class="py-3 px-3 sm:px-4 text-xs"><span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${isInStock?'bg-emerald-100 text-emerald-800':'bg-rose-100 text-rose-800'}">${stockText}</span></td>
+                        <td class="py-3 px-3 sm:px-4 text-xs">${prod.badge || '-'}</td>
+                        <td class="py-3 px-4 sm:px-6 text-right space-x-1">
+                            <button onclick="openEditProductModal('${prod.id}')" class="text-[11px] px-2 py-1 bg-slate-100 rounded">Edit</button>
+                            <button onclick="deleteProduct('${prod.id}')" class="text-[11px] px-2 py-1 bg-rose-50 text-rose-600 rounded">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populateCategorySelectDropdown() {
+            const select = document.getElementById('formCategorySelect');
+            if (select) select.innerHTML = categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        function openAddProductModal() {
+            document.getElementById('productModalTitle').innerText = 'Add New Product';
+            document.getElementById('formProductId').value = '';
+            document.getElementById('productForm').reset();
+            document.getElementById('imagePreviewsGrid').innerHTML = '';
+            uploadedGalleryImagesTemp = [];
+            populateCategorySelectDropdown();
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function openEditProductModal(id) {
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+
+            document.getElementById('productModalTitle').innerText = 'Edit Product';
+            document.getElementById('formProductId').value = prod.id;
+            document.getElementById('formTitle').value = prod.title;
+            populateCategorySelectDropdown();
+            document.getElementById('formCategorySelect').value = prod.category;
+            document.getElementById('formBrand').value = prod.brand;
+            document.getElementById('formPrice').value = prod.price;
+            document.getElementById('formOldPrice').value = prod.oldPrice || '';
+            document.getElementById('formSpecs').value = prod.specs;
+            document.getElementById('formQuantity').value = prod.quantity !== undefined ? prod.quantity : 10;
+            document.getElementById('formBadge').value = prod.badge || '';
+
+            uploadedGalleryImagesTemp = prod.images || [prod.image];
+            document.getElementById('imagePreviewsGrid').innerHTML = uploadedGalleryImagesTemp.map(img => `
+                <div class="w-14 h-14 bg-white rounded-xl border p-1 flex items-center justify-center">
+                    <img src="${img}" class="max-h-full max-w-full object-contain">
+                </div>
+            `).join('');
+
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() { document.getElementById('productModal')?.classList.add('hidden'); }
+
+        function saveProductHandler(e) {
+            e.preventDefault();
+            const id = document.getElementById('formProductId').value;
+            const title = document.getElementById('formTitle').value;
+            const category = document.getElementById('formCategorySelect').value;
+            const brand = document.getElementById('formBrand').value;
+            const price = parseFloat(document.getElementById('formPrice').value);
+            const oldPrice = parseFloat(document.getElementById('formOldPrice').value) || null;
+            const specs = document.getElementById('formSpecs').value;
+            const quantity = parseInt(document.getElementById('formQuantity').value) || 0;
+            const badge = document.getElementById('formBadge').value;
+
+            const images = uploadedGalleryImagesTemp.length > 0 ? uploadedGalleryImagesTemp : ['https://placehold.co/400x400/0f2a4a/ffffff?text=Classic'];
+            const image = images[0];
+
+            let stock = quantity > 0 ? 'In Stock' : 'Out of Stock';
+
+            if (id) {
+                const idx = products.findIndex(p => p.id === id);
+                if (idx !== -1) products[idx] = { id, title, category, brand, price, oldPrice, image, images, specs, stock, quantity, badge };
+                logSecurityEvent("Product Updated", `Updated product ${title}`);
+            } else {
+                products.push({ id: 'p-' + Date.now(), title, category, brand, price, oldPrice, image, images, specs, stock, quantity, badge });
+                logSecurityEvent("Product Created", `Added new product ${title}`);
+            }
+
+            saveState();
+            closeProductModal();
+            renderAdminDashboard();
+            showToast("Product saved successfully!", "success");
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Delete this product?")) {
+                const prod = products.find(p => p.id === id);
+                products = products.filter(p => p.id !== id);
+                saveState();
+                renderAdminDashboard();
+                logSecurityEvent("Product Deleted", `Deleted product ${prod ? prod.title : id}`);
+                showToast("Product deleted", "info");
+            }
+        }
+
+        function openCategoryModal() { 
+            document.getElementById('newCatName').value = '';
+            document.getElementById('newCatIconImage').value = '';
+            document.getElementById('newCatIconClass').value = '';
+            catIconImageTemp = '';
+            document.getElementById('categoryModal')?.classList.remove('hidden'); 
+        }
+        function closeCategoryModal() { document.getElementById('categoryModal')?.classList.add('hidden'); }
+
+        function addCategoryHandler(e) {
+            e.preventDefault();
+            const name = document.getElementById('newCatName').value.trim();
+            const imageIcon = document.getElementById('newCatIconImage').value;
+            let icon = document.getElementById('newCatIconClass').value.trim();
+            if (icon && !icon.startsWith('fa-')) icon = 'fa-' + icon;
+
+            categories.push({ id: 'cat-' + Date.now(), name, icon: icon || 'fa-tag', imageIcon });
+            saveState();
+            closeCategoryModal();
+            renderCategoryCarousel();
+            renderCategoryDropdownSelect();
+            populateCategorySelectDropdown();
+            logSecurityEvent("Category Created", `Created category ${name}`);
+            showToast("Category created", "success");
+        }
+
+        function renderAuditLogs() {
+            const container = document.getElementById('auditLogContainer');
+            if (!container) return;
+            container.innerHTML = auditLogs.length ? auditLogs.map(l => `<div class="py-1 border-b border-slate-200 text-[10px] sm:text-[11px]"><span class="text-frankoBlue font-bold">[${l.timestamp}]</span> <span class="text-amber-700 font-semibold">${l.action}:</span> ${l.details}</div>`).join('') : '<p class="text-xs text-slate-400">No security audit logs recorded yet.</p>';
+        }
+
+        function clearAuditLogs() {
+            auditLogs = [];
+            saveState();
+            renderAuditLogs();
+            showToast("Audit logs cleared", "info");
+        }
+
+        function switchBranch() { showToast(`Branch: ${document.getElementById('branchSelect').value}`, "info"); }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toastNotification');
+            const textEl = document.getElementById('toastText');
+            if (!toast || !textEl) return;
+            textEl.innerText = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-24', 'opacity-0'); }, 3000);
+        }
+    </script>
+</body>
+</html>
